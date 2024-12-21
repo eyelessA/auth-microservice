@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#Генерация ключа шифрования
+php artisan key:generate
 # Сбилдим фронт
 npm run build
 
