@@ -32,10 +32,5 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 
 RUN composer install
 
-# Установим Node.js и npm
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
 # Установим зависимости npm
 RUN npm install
