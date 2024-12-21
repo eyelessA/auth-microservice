@@ -4,21 +4,25 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - .:/var/www
+      - ./public:/var/www/public
+      - ./storage:/var/www/storage
       - ./docker/local/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./docker/local/nginx/logs:/var/log/nginx/
     ports:
       - "8000:80"
     restart: unless-stopped
     container_name: auth_microservice_nginx
 
-  php:
+  app:
     build:
-      context: docker/local/php
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/local/app/Dockerfile
     volumes:
-      - .:/var/www
+      - ./public:/var/www/public
+      - ./storage:/var/www/storage
     restart: unless-stopped
-    container_name: auth_microservice_php
+    container_name: auth_microservice_app
+    entrypoint: ["sh", "-c", "./docker/entrypoint.sh"]
 
   postgres:
     image: postgres:latest
@@ -32,3 +36,16 @@ services:
       - "5432:5432"
     restart: unless-stopped
     container_name: auth_microservice_postgres
+
+  pgadmin:
+    image: dpage/pgadmin4
+    volumes:
+      - ./pgadmin_data:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "8888:80"
+    restart: unless-stopped
+    container_name: auth_microservice_pgadmin
+
